@@ -18,6 +18,7 @@ import hmac
 import html
 import io
 import os
+import re
 import secrets
 import sqlite3
 import time
@@ -163,6 +164,15 @@ def submit_application():
 
     if not form.get("name") or not form.get("email") or not form.get("dob") or not form.get("national"):
         return jsonify({"error": "missing_fields", "message": "Required fields are missing."}), 400
+
+    email_value = (form.get("email") or "").strip()
+    if not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]{2,}$", email_value) or ".." in email_value:
+        return jsonify({"error": "invalid_email", "message": "Enter a valid email address."}), 400
+
+    phone_value = (form.get("phone") or "").strip()
+    phone_digits = re.sub(r"\D", "", phone_value)
+    if not re.match(r"^\+?[0-9\s\-()]+$", phone_value) or not (7 <= len(phone_digits) <= 15):
+        return jsonify({"error": "invalid_phone", "message": "Enter a valid mobile number."}), 400
 
     photo = files.get("photo")
     if not photo or not photo.filename:
