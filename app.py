@@ -146,6 +146,41 @@ def index():
 
 
 # --------------------------------------------------------- applicant API --
+@app.route("/api/check-duplicate", methods=["POST"])
+def check_duplicate():
+    """Lets the frontend flag a returning applicant as soon as they type their
+    email or phone, instead of only at final submission."""
+    ip = client_ip()
+    if rate_limited(f"dupe-check:{ip}", limit=60, window_seconds=3600):
+        return jsonify({"error": "rate_limited"}), 429
+
+    payload = request.get_json(silent=True) or {}
+    field = payload.get("field")
+    value = (payload.get("value") or "").strip()
+    if not value or field not in ("email", "phone"):
+        return jsonify({"duplicate": False})
+
+    db = get_db()
+    if field == "email":
+        row = db.execute(
+            "SELECT id FROM applications WHERE LOWER(TRIM(email)) = ?",
+            (value.lower(),),
+        ).fetchone()
+        return jsonify({"duplicate": bool(row)})
+
+    # phone: compare the last 9 digits so +9715XXXXXXXX / 05XXXXXXXX / 5XXXXXXXX
+    # typed for the same number are all recognised as the same person
+    digits = re.sub(r"\D", "", value)
+    if not digits:
+        return jsonify({"duplicate": False})
+    suffix = digits[-9:]
+    for row in db.execute("SELECT phone FROM applications").fetchall():
+        existing_digits = re.sub(r"\D", "", row["phone"] or "")
+        if existing_digits and existing_digits[-9:] == suffix:
+            return jsonify({"duplicate": True})
+    return jsonify({"duplicate": False})
+
+
 @app.route("/api/applications", methods=["POST"])
 def submit_application():
     ip = client_ip()
@@ -173,6 +208,32 @@ def submit_application():
     phone_digits = re.sub(r"\D", "", phone_value)
     if not re.match(r"^\+?[0-9\s\-()]+$", phone_value) or not (7 <= len(phone_digits) <= 15):
         return jsonify({"error": "invalid_phone", "message": "Enter a valid mobile number."}), 400
+
+    # -------------------------------------------------- duplicate applicant --
+    # Block a second application from the same person. We match on email
+    # (case/whitespace-insensitive) and on the last 9 digits of the phone
+    # number, since the same UAE number can be typed as +9715XXXXXXXX,
+    # 05XXXXXXXX, or 5XXXXXXXX and should still be recognised as one person.
+    db = get_db()
+    existing_email = db.execute(
+        "SELECT id FROM applications WHERE LOWER(TRIM(email)) = ?",
+        (email_value.lower(),),
+    ).fetchone()
+    if existing_email:
+        return jsonify({
+            "error": "duplicate_email",
+            "message": "An application already exists for this email address. Only one application is allowed per person.",
+        }), 409
+
+    if phone_digits:
+        phone_suffix = phone_digits[-9:]
+        for row in db.execute("SELECT phone FROM applications").fetchall():
+            existing_digits = re.sub(r"\D", "", row["phone"] or "")
+            if existing_digits and existing_digits[-9:] == phone_suffix:
+                return jsonify({
+                    "error": "duplicate_phone",
+                    "message": "An application already exists for this mobile number. Only one application is allowed per person.",
+                }), 409
 
     photo = files.get("photo")
     if not photo or not photo.filename:
