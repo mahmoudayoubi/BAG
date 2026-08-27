@@ -176,7 +176,14 @@
   @media (max-width: 860px){ .side{ border-right:none; border-bottom:1px solid var(--panel-line); min-height:170px; } }
 
   .side::before{
-    content:""; position:absolute; inset:0; z-index:-2; background:var(--ink-2);
+    content:""; position:absolute; inset:0; z-index:-2;
+    background-color:var(--ink-2);
+    background-image:
+      linear-gradient(180deg, rgba(18,14,10,0.55) 0%, rgba(18,14,10,0.72) 55%, rgba(18,14,10,0.93) 100%),
+      url('https://images.unsplash.com/photo-1618597778480-8c5d3f2d3ba8?fm=jpg&q=70&w=1400&auto=format&fit=crop&ixlib=rb-4.1.0');
+    background-size:cover, cover;
+    background-position:center, center;
+    background-repeat:no-repeat, no-repeat;
   }
   .side .glow{
     position:absolute; z-index:-1; border-radius:50%;
@@ -621,10 +628,25 @@
   }
 
   /* ---------------- validation ---------------- */
+  function isValidPhone(v){
+    if(!v) return false;
+    var trimmed = String(v).trim();
+    // allow an optional leading +, digits, spaces, dashes and parentheses only
+    if(!/^\+?[0-9\s\-()]+$/.test(trimmed)) return false;
+    var digits = trimmed.replace(/\D/g, "");
+    return digits.length >= 7 && digits.length <= 15;
+  }
+  function isValidEmail(v){
+    if(!v) return false;
+    var trimmed = String(v).trim();
+    // reject spaces, require a single @, a dot in the domain, and no consecutive dots
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(trimmed) && trimmed.indexOf("..") === -1;
+  }
   function isValid(step){
     var v = state.values[step.key];
     switch(step.type){
       case "text":
+        if(step.key === "phone") return isValidPhone(v);
         return !!(v && String(v).trim().length > 1);
       case "date":
         if(!v) return false;
@@ -633,7 +655,7 @@
         var age = (Date.now() - d.getTime()) / (365.25*24*3600*1000);
         return age >= 18 && age < 110;
       case "email":
-        return !!(v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+        return isValidEmail(v);
       case "single":
         return !!v;
       case "multi":
@@ -651,7 +673,9 @@
 
   function errorFor(step){
     switch(step.type){
-      case "text": return "Please enter your full name.";
+      case "text":
+        if(step.key === "phone") return "Enter a valid mobile number (7–15 digits, country code optional, e.g. +971 5X XXX XXXX).";
+        return "Please enter your full name.";
       case "date": return "You must be 18 or older to apply.";
       case "email": return "Enter a valid email address.";
       case "single": return "Choose one option to continue.";
