@@ -222,7 +222,7 @@ def submit_application():
     if existing_email:
         return jsonify({
             "error": "duplicate_email",
-            "message": "An application already exists for this email address. Only one application is allowed per person.",
+            "message": "You've already applied with this email address. Only one application is allowed per person.",
         }), 409
 
     if phone_digits:
@@ -232,7 +232,7 @@ def submit_application():
             if existing_digits and existing_digits[-9:] == phone_suffix:
                 return jsonify({
                     "error": "duplicate_phone",
-                    "message": "An application already exists for this mobile number. Only one application is allowed per person.",
+                    "message": "You've already applied with this mobile number. Only one application is allowed per person.",
                 }), 409
 
     photo = files.get("photo")
