@@ -1,0 +1,1067 @@
+<title>The Gahwa Journey</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Reem+Kufi:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:        #150d09;
+    --ink-2:      #1c130d;
+    --panel:      #241811;
+    --panel-hi:   #2e2016;
+    --panel-line: #3c2a1b;
+    --brass:      #c9974d;
+    --brass-hi:   #e0b06e;
+    --brass-ink:  #1c1108;
+    --cardamom:   #8fa176;
+    --carnelian:  #a34c3c;
+    --parchment:  #ece0cb;
+    --muted:      #a2907a;
+    --muted-2:    #6f6152;
+    --shadow: 0 30px 70px -30px rgba(0,0,0,0.7);
+    --radius: 2px;
+    color-scheme: dark;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--parchment);
+    font-family:'Work Sans', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', Georgia, serif;
+    font-weight:500;
+    line-height:1.05;
+    margin:0;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  em{
+    font-style:italic;
+    color:var(--brass-hi);
+  }
+  p{ margin:0; }
+  button{ font-family:inherit; }
+  a{ color:inherit; }
+
+  .kufi{ font-family:'Reem Kufi', 'Work Sans', sans-serif; }
+
+  ::selection{ background:var(--brass); color:var(--brass-ink); }
+
+  :focus-visible{
+    outline:2px solid var(--cardamom);
+    outline-offset:3px;
+  }
+
+  /* ---------- decorative sadu pattern ---------- */
+  .sadu-strip{
+    background-image: repeating-linear-gradient(
+      135deg,
+      transparent 0 10px,
+      rgba(201,151,77,0.55) 10px 12px,
+      transparent 12px 22px,
+      rgba(163,76,60,0.45) 22px 24px,
+      transparent 24px 34px
+    );
+    background-size: 48px 48px;
+  }
+
+  /* ================= APP SHELL ================= */
+  #app{ min-height:100vh; display:flex; flex-direction:column; }
+
+  header.top{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px clamp(20px,4vw,48px);
+    border-bottom:1px solid var(--panel-line);
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--panel-line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; color:var(--brass-hi);
+    background:radial-gradient(circle at 35% 30%, var(--panel-hi), var(--ink-2));
+    flex-shrink:0;
+  }
+  .brand-name{ font-family:'Fraunces',serif; font-size:1.05rem; letter-spacing:0.01em; }
+  .top-tag{
+    font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--muted); white-space:nowrap;
+  }
+
+  main.stage{ flex:1; display:flex; }
+
+  /* ---------- landing ---------- */
+  .landing{
+    position:relative;
+    flex:1;
+    display:flex; align-items:center;
+    padding:clamp(28px,7vw,96px);
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .landing::before{
+    content:"";
+    position:absolute; inset:0; z-index:-2;
+    background:
+      radial-gradient(60% 55% at 82% 18%, rgba(201,151,77,0.16), transparent 60%),
+      radial-gradient(50% 60% at 100% 100%, rgba(143,161,118,0.10), transparent 65%),
+      var(--ink);
+  }
+  .landing::after{
+    content:"";
+    position:absolute; inset:0; z-index:-1; opacity:0.5;
+    background-image: radial-gradient(rgba(236,224,203,0.09) 1px, transparent 1.4px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(60% 70% at 30% 40%, black, transparent 85%);
+            mask-image: radial-gradient(60% 70% at 30% 40%, black, transparent 85%);
+  }
+  .landing-pot{
+    position:absolute; right:clamp(-40px,-2vw,40px); bottom:-40px;
+    width:min(46vw,520px); opacity:0.9; z-index:-1;
+    filter:drop-shadow(0 40px 60px rgba(0,0,0,0.55));
+  }
+  .landing-inner{ max-width:640px; }
+  .eyebrow{
+    font-family:'Reem Kufi',sans-serif; font-size:0.72rem;
+    letter-spacing:0.18em; text-transform:uppercase; color:var(--brass-hi);
+    display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow::before{ content:""; width:22px; height:1px; background:var(--brass); display:inline-block; }
+  .landing h1{ font-size:clamp(2.4rem,5.4vw,4.1rem); }
+  .landing .lede{
+    margin-top:22px; max-width:46ch; color:var(--muted); font-size:1.05rem; line-height:1.6;
+  }
+  .cta{
+    margin-top:36px; display:inline-flex; align-items:center; gap:10px;
+    background:var(--brass); color:var(--brass-ink); border:none;
+    font-weight:600; font-size:0.98rem; padding:16px 26px; cursor:pointer;
+    box-shadow:0 18px 34px -14px rgba(201,151,77,0.55);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .cta:hover{ background:var(--brass-hi); transform:translateY(-1px); }
+  .cta:active{ transform:translateY(0); }
+  .cta svg{ transition:transform .18s ease; }
+  .cta:hover svg{ transform:translateX(3px); }
+
+  .resume-note{
+    margin-top:18px; font-size:0.82rem; color:var(--muted-2);
+  }
+  .resume-note button{
+    background:none;border:none;color:var(--cardamom);text-decoration:underline;
+    cursor:pointer;font-size:inherit;padding:0;
+  }
+
+  /* ---------- wizard layout ---------- */
+  .wizard{ flex:1; display:grid; grid-template-columns: minmax(260px,38%) 1fr; }
+  @media (max-width: 860px){
+    .wizard{ grid-template-columns:1fr; }
+  }
+
+  .side{
+    position:relative; overflow:hidden; isolation:isolate;
+    padding:clamp(24px,4vw,48px);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    border-right:1px solid var(--panel-line);
+    min-height:220px;
+  }
+  @media (max-width: 860px){ .side{ border-right:none; border-bottom:1px solid var(--panel-line); min-height:170px; } }
+
+  .side::before{
+    content:""; position:absolute; inset:0; z-index:-2; background:var(--ink-2);
+  }
+  .side .glow{
+    position:absolute; z-index:-1; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,151,77,0.35), transparent 70%);
+    filter:blur(6px);
+    animation: flicker 6s ease-in-out infinite;
+  }
+  .side .glow.one{ width:340px; height:340px; top:-60px; right:-80px; }
+  .side .glow.two{ width:260px; height:260px; bottom:-100px; left:-60px; background:radial-gradient(circle, rgba(143,161,118,0.25), transparent 70%); animation-delay:-3s; }
+  @keyframes flicker{ 0%,100%{ opacity:0.65; } 50%{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){ .side .glow{ animation:none; } }
+
+  .side-icon{ width:min(150px,34%); color:var(--brass); opacity:0.85; margin-bottom:28px; }
+  .side-arc{ font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--brass-hi); margin-bottom:10px; font-family:'Reem Kufi',sans-serif; }
+  .side h2{ font-size:clamp(1.5rem,2.6vw,2.1rem); color:var(--parchment); max-width:14ch; }
+
+  .content{ display:flex; flex-direction:column; }
+
+  .progress-wrap{
+    padding:20px clamp(20px,4vw,48px) 0;
+  }
+  .progress-meta{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:0.74rem; color:var(--muted); margin-bottom:10px;
+    font-variant-numeric: tabular-nums;
+  }
+  .cups{ display:flex; gap:5px; flex-wrap:wrap; }
+  .cup-group{ display:flex; gap:5px; padding-right:10px; margin-right:2px; border-right:1px solid var(--panel-line); }
+  .cup-group:last-child{ border-right:none; padding-right:0; margin-right:0; }
+  .cup-group button{ all:unset; cursor:default; display:block; }
+  .cup-group.jumpable button{ cursor:pointer; }
+  .cup{
+    width:14px; height:16px;
+    border:1.3px solid var(--panel-line);
+    border-bottom-left-radius:7px; border-bottom-right-radius:7px;
+    position:relative; overflow:hidden;
+    background:transparent;
+  }
+  .cup .fill{
+    position:absolute; left:0; right:0; bottom:0; height:0%;
+    background:var(--brass); transition:height .5s ease;
+  }
+  .cup.done{ border-color:var(--brass); }
+  .cup.done .fill{ height:100%; }
+  .cup.current{ border-color:var(--brass-hi); }
+  .cup.current .fill{ height:55%; animation:pour 1.8s ease-in-out infinite; }
+  @keyframes pour{ 0%,100%{ height:35%; } 50%{ height:70%; } }
+  @media (prefers-reduced-motion: reduce){ .cup.current .fill{ animation:none; height:55%; } }
+
+  .card-area{
+    flex:1; display:flex; align-items:center; padding:clamp(20px,4vw,48px);
+  }
+  .card{
+    width:100%; max-width:640px;
+    background:var(--panel);
+    border:1px solid var(--panel-line);
+    box-shadow:var(--shadow);
+    padding:clamp(28px,4vw,48px);
+    position:relative;
+  }
+  .card::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(var(--brass), var(--cardamom));
+  }
+  .step-meta{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .step-num{ font-family:'Reem Kufi',sans-serif; color:var(--brass-hi); font-size:0.85rem; font-variant-numeric: tabular-nums; }
+  .step-eyebrow{ font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
+  .step-q{ font-size:clamp(1.5rem,3vw,2.05rem); margin-bottom:12px; }
+  .step-help{ color:var(--muted); font-size:0.94rem; line-height:1.55; margin-bottom:26px; max-width:52ch; }
+
+  .field-text{
+    width:100%; background:transparent; border:none; border-bottom:1.5px solid var(--panel-line);
+    color:var(--parchment); font-size:1.15rem; font-family:'Work Sans',sans-serif;
+    padding:10px 2px; outline:none; transition:border-color .18s ease;
+  }
+  .field-text::placeholder{ color:var(--muted-2); }
+  .field-text:focus{ border-color:var(--brass); }
+  .field-text[type="date"]{ color-scheme:dark; }
+
+  textarea.field-text{ resize:vertical; min-height:130px; line-height:1.6; font-size:1.02rem; border:1.5px solid var(--panel-line); padding:14px; }
+  textarea.field-text:focus{ border-color:var(--brass); }
+
+  .options{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .options{ grid-template-columns:1fr; } }
+  .opt{
+    display:flex; align-items:center; gap:12px;
+    border:1.3px solid var(--panel-line); background:var(--panel-hi);
+    padding:16px; cursor:pointer; text-align:left; color:var(--parchment);
+    transition:border-color .15s ease, background .15s ease, transform .12s ease;
+    font-size:0.98rem;
+  }
+  .opt:hover{ border-color:var(--brass); }
+  .opt .badge{
+    width:24px; height:24px; flex-shrink:0; border:1px solid var(--panel-line);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Reem Kufi',sans-serif; font-size:0.72rem; color:var(--muted);
+  }
+  .opt.selected{ border-color:var(--brass); background:rgba(201,151,77,0.12); }
+  .opt.selected .badge{ background:var(--brass); color:var(--brass-ink); border-color:var(--brass); }
+  .opt .tick{ margin-left:auto; color:var(--brass); opacity:0; transform:scale(0.7); transition:opacity .15s ease, transform .15s ease; }
+  .opt.selected .tick{ opacity:1; transform:scale(1); }
+
+  .upload-grid{ display:grid; gap:14px; }
+  .upload{
+    border:1.5px dashed var(--panel-line); padding:20px; cursor:pointer;
+    display:flex; align-items:center; gap:14px; transition:border-color .15s ease, background .15s ease;
+    background:var(--panel-hi);
+  }
+  .upload:hover{ border-color:var(--brass); }
+  .upload.filled{ border-style:solid; border-color:var(--cardamom); }
+  .upload input{ display:none; }
+  .upload .u-icon{ width:26px; height:26px; flex-shrink:0; color:var(--brass); }
+  .upload .u-text b{ display:block; font-weight:600; font-size:0.95rem; }
+  .upload .u-text span{ display:block; color:var(--muted); font-size:0.8rem; margin-top:2px; }
+  .upload .u-file{ margin-left:auto; font-size:0.82rem; color:var(--cardamom); max-width:40%; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .review-list{ display:flex; flex-direction:column; gap:0; border-top:1px solid var(--panel-line); margin-bottom:22px; }
+  .review-row{ display:flex; justify-content:space-between; gap:18px; padding:11px 0; border-bottom:1px solid var(--panel-line); font-size:0.9rem; }
+  .review-row dt{ color:var(--muted); flex-shrink:0; }
+  .review-row dd{ margin:0; text-align:right; max-width:60%; }
+  .review-edit{ background:none;border:none;color:var(--cardamom);font-size:0.78rem;cursor:pointer;text-decoration:underline;margin-left:8px; }
+
+  .consent{ display:flex; flex-direction:column; gap:12px; margin-bottom:8px; }
+  .consent label{
+    display:flex; gap:12px; align-items:flex-start; border:1.3px solid var(--panel-line);
+    padding:14px; cursor:pointer; font-size:0.92rem; background:var(--panel-hi);
+  }
+  .consent label:has(input:checked){ border-color:var(--cardamom); }
+  .consent input{ margin-top:2px; accent-color:var(--cardamom); width:16px;height:16px; flex-shrink:0; }
+
+  .nav-row{ display:flex; align-items:center; justify-content:space-between; margin-top:30px; gap:14px; }
+  .btn-back{ background:none; border:none; color:var(--muted); font-size:0.92rem; cursor:pointer; display:flex; align-items:center; gap:6px; padding:8px 0; }
+  .btn-back:hover{ color:var(--parchment); }
+  .btn-continue{
+    background:var(--brass); color:var(--brass-ink); border:none; font-weight:600;
+    padding:14px 24px; font-size:0.96rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease, background .15s ease, opacity .15s ease;
+  }
+  .btn-continue:hover{ background:var(--brass-hi); transform:translateY(-1px); }
+  .btn-continue:disabled{ opacity:0.4; cursor:not-allowed; transform:none; background:var(--brass); }
+  .btn-continue svg{ transition:transform .15s ease; }
+  .btn-continue:hover svg{ transform:translateX(3px); }
+
+  .field-error{ color:var(--carnelian); font-size:0.84rem; margin-top:10px; min-height:1.2em; }
+
+  /* confirmation */
+  .confirm{ text-align:left; }
+  .confirm .stamp{
+    width:64px; height:64px; border-radius:50%; border:1.5px solid var(--cardamom);
+    display:flex; align-items:center; justify-content:center; margin-bottom:24px; color:var(--cardamom);
+  }
+  .confirm .stamp svg{ width:30px; height:auto; }
+  .confirm h2{ font-size:clamp(1.6rem,3vw,2.2rem); margin-bottom:14px; }
+  .confirm p{ color:var(--muted); max-width:48ch; line-height:1.6; margin-bottom:8px; }
+  .confirm .ref{ font-family:'Reem Kufi',sans-serif; color:var(--brass-hi); font-size:0.85rem; margin-top:18px; letter-spacing:0.04em; }
+
+  .fade-enter{ animation:fadeIn .38s ease both; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion: reduce){ .fade-enter{ animation:none; } }
+
+  .exit-link{ font-size:0.82rem; color:var(--muted); text-decoration:none; border:1px solid var(--panel-line); padding:8px 14px; }
+  .exit-link:hover{ color:var(--parchment); border-color:var(--muted); }
+
+  .sr-only{ position:absolute; width:1px;height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+
+  /* card watermark: quiet dallah presence throughout the wizard */
+  .card{ overflow:hidden; }
+  .card .watermark{
+    position:absolute; right:-18px; bottom:-18px; width:150px; color:var(--panel-line);
+    opacity:0.6; pointer-events:none; z-index:0;
+  }
+  .card > *:not(.watermark){ position:relative; z-index:1; }
+
+  /* ---------------- confirm modal ---------------- */
+  .confirm-overlay{
+    position:fixed; inset:0; z-index:998; background:rgba(10,6,4,0.72);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .confirm-modal{
+    background:var(--panel); border:1px solid var(--panel-line); box-shadow:var(--shadow);
+    padding:28px; max-width:380px; width:100%;
+  }
+  .confirm-modal h3{ font-size:1.3rem; margin-bottom:10px; }
+  .confirm-modal p{ color:var(--muted); font-size:0.92rem; line-height:1.55; }
+
+  /* ---------------- pour transition ---------------- */
+  .pour-overlay{
+    position:fixed; inset:0; z-index:999; background:var(--ink);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+    opacity:0; transition:opacity .32s ease;
+  }
+  .pour-overlay.show{ opacity:1; }
+  .pour-overlay.hide{ opacity:0; }
+  .pour-scene{ position:relative; width:150px; height:200px; }
+  .pour-dallah{
+    position:absolute; top:0; left:50%; width:78px; color:var(--brass-hi);
+    transform-origin:72% 42%;
+    transform:translateX(-50%) rotate(0deg);
+  }
+  .pour-dallah svg, .pour-finjan svg, .side-icon svg, .landing-pot svg{ width:100%; height:auto; display:block; }
+  .pour-overlay.show .pour-dallah{ animation:pourTilt 1.5s ease-in-out both; }
+  .pour-stream{
+    position:absolute; top:78px; left:59%; width:3px; height:0; border-radius:2px;
+    background:linear-gradient(var(--brass-hi), var(--brass));
+  }
+  .pour-overlay.show .pour-stream{ animation:pourStream 1.5s ease-in-out both; }
+  .pour-finjan{
+    position:absolute; bottom:6px; left:50%; width:64px; color:var(--brass);
+    transform:translateX(-50%);
+  }
+  .pour-liquid{
+    position:absolute; left:24%; right:24%; bottom:32%; height:0;
+    background:var(--brass); border-radius:1px 1px 3px 3px;
+  }
+  .pour-overlay.show .pour-liquid{ animation:pourFill 1.5s ease-in-out both; }
+  .pour-caption{ font-size:0.74rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); opacity:0; }
+  .pour-overlay.show .pour-caption{ animation:pourCaption 1.5s ease both; }
+
+  @keyframes pourTilt{
+    0%, 12%{ transform:translateX(-50%) rotate(0deg); }
+    42%, 68%{ transform:translateX(-50%) rotate(28deg); }
+    92%,100%{ transform:translateX(-50%) rotate(0deg); }
+  }
+  @keyframes pourStream{
+    0%, 30%{ height:0; opacity:0; }
+    38%{ opacity:1; }
+    65%{ height:64px; opacity:1; }
+    82%{ height:64px; opacity:0; }
+    100%{ height:0; opacity:0; }
+  }
+  @keyframes pourFill{
+    0%, 40%{ height:0; }
+    88%, 100%{ height:60%; }
+  }
+  @keyframes pourCaption{
+    0%, 15%{ opacity:0; transform:translateY(4px); }
+    30%, 85%{ opacity:1; transform:translateY(0); }
+    100%{ opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .pour-overlay.show .pour-dallah, .pour-overlay.show .pour-stream,
+    .pour-overlay.show .pour-liquid, .pour-overlay.show .pour-caption{ animation:none; }
+  }
+</style>
+
+<div id="app"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- data ---------------- */
+  var ARCS = [
+    { name:"At the door",          caption:"First, let's see if you qualify." },
+    { name:"Before the first cup", caption:"Begin with who you are." },
+    { name:"What you carry in",    caption:"Your experience, in your own hands." },
+    { name:"Pour the last cup",    caption:"Tell us why, then send it off." }
+  ];
+
+  var STEPS = [
+    { arc:0, eyebrow:"Eligibility", type:"single", key:"national",
+      q:"Are you a UAE National?", help:"This programme is currently open to UAE Nationals only.",
+      options:["Yes","No"],
+      gate:function(v){ return v === "No"; },
+      gateReason:"Bait Al Gahwa is currently open to UAE Nationals only. We'd still love to have you at our public events — follow along for future opportunities." },
+    { arc:0, eyebrow:"The essentials", type:"date", key:"dob",
+      q:"When were you born?", help:"Applicants must be 18 years or older.",
+      gate:function(v){
+        if(!v) return false;
+        var d = new Date(v);
+        if(isNaN(d.getTime())) return false;
+        var age = (Date.now() - d.getTime()) / (365.25*24*3600*1000);
+        return age < 18;
+      },
+      gateReason:"You need to be 18 or older to apply. Please come back once you've turned 18 — we'd love to hear from you then." },
+    { arc:0, eyebrow:"First things first", type:"text", key:"name",
+      q:"What should we call you?", help:"Enter your full name as shown on your Emirates ID.",
+      placeholder:"Full name" },
+    { arc:1, eyebrow:"About you", type:"single", key:"gender",
+      q:"How do you describe yourself?", help:"",
+      options:["Female","Male","Prefer not to say"] },
+    { arc:1, eyebrow:"Stay connected", type:"text", inputType:"tel", key:"phone",
+      q:"What is your mobile number?", help:"Include your country code, for example +971.",
+      placeholder:"+971 5X XXX XXXX" },
+    { arc:1, eyebrow:"Stay connected", type:"email", key:"email",
+      q:"What is your email address?", help:"One application is allowed per email address.",
+      placeholder:"name@email.com" },
+    { arc:1, eyebrow:"Your neighbourhood", type:"single", key:"location",
+      q:"Where in Abu Dhabi do you live?", help:"",
+      options:["Abu Dhabi City","Al Ain","Al Dhafra","Other"] },
+    { arc:1, eyebrow:"Eligibility", type:"single", key:"travel",
+      q:"Can you travel within Abu Dhabi for events?", help:"",
+      options:["Yes","No"] },
+    { arc:1, eyebrow:"Your time", type:"multi", key:"availability",
+      q:"When are you available?", help:"Choose all that apply.",
+      options:["Evenings","Weekends","Events"] },
+    { arc:1, eyebrow:"Your time", type:"single", key:"hours",
+      q:"How many hours can you give each week?", help:"",
+      options:["Under 5 hours","5–10 hours","11–20 hours","More than 20 hours"] },
+    { arc:1, eyebrow:"Getting around", type:"single", key:"transport",
+      q:"Do you have your own transportation?", help:"",
+      options:["Yes","No"] },
+    { arc:2, eyebrow:"Your gahwa story", type:"single", key:"experience",
+      q:"Where have you prepared Arabic coffee?", help:"",
+      options:["No experience","At home","Family events","Hospitality or events","Coffee shop","Other"] },
+    { arc:2, eyebrow:"Your gahwa story", type:"single", key:"training",
+      q:"Have you received hospitality or coffee training?", help:"",
+      options:["Yes","No"] },
+    { arc:2, eyebrow:"Your voice", type:"multi", key:"languages",
+      q:"Which languages do you speak?", help:"Choose all that apply.",
+      options:["Arabic","English","Hindi","Urdu","French","Other"] },
+    { arc:2, eyebrow:"Your background", type:"single", key:"education",
+      q:"What is your highest level of education?", help:"",
+      options:["High School","Diploma","Bachelor's Degree","Master's Degree","Doctorate","Other"] },
+    { arc:2, eyebrow:"Right now", type:"single", key:"status",
+      q:"What best describes your current status?", help:"",
+      options:["Student","Employed full-time","Employed part-time","Self-employed","Looking for work"] },
+    { arc:3, eyebrow:"In your own words", type:"textarea", key:"motivation",
+      q:"Why would you like to join Bait Al Gahwa?", help:"Tell us what Emirati coffee and hospitality mean to you.",
+      placeholder:"Tell us what Emirati coffee and hospitality mean to you." },
+    { arc:3, eyebrow:"Almost there", type:"single", key:"referral",
+      q:"Where did you hear about us?", help:"",
+      options:["Instagram","TikTok","Friend or family","School or university","Advertisement","Other"] },
+    { arc:3, eyebrow:"Show us more", type:"files", key:"files",
+      q:"Add your supporting files.", help:"A recent photo is required; CV and video are optional." },
+    { arc:3, eyebrow:"Final step", type:"final", key:"final",
+      q:"Ready to send your application?", help:"Take a moment to check what you've told us." }
+  ];
+
+  var TOTAL = STEPS.length;
+
+  /* ---------------- state ---------------- */
+  var state = { step:-1, values:{}, files:{}, consent:{a:false,b:false}, sent:false, disqualified:null };
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem("gahwa-journey-v1");
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && typeof parsed === "object"){
+          state.values = parsed.values || {};
+          state.step = typeof parsed.step === "number" ? parsed.step : -1;
+        }
+      }
+    }catch(e){ /* storage unavailable — continue with defaults */ }
+  }
+  function saveState(){
+    try{
+      localStorage.setItem("gahwa-journey-v1", JSON.stringify({ values: state.values, step: state.step }));
+    }catch(e){ /* ignore */ }
+  }
+  function clearState(){
+    try{ localStorage.removeItem("gahwa-journey-v1"); }catch(e){}
+  }
+
+  loadState();
+
+  /* ---------------- icons ---------------- */
+  var ICON_DALLAH = '<svg viewBox="0 0 145 140" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M74,20 Q78,26 68,33 Q96,40 90,54 Q94,74 87,92 Q86,108 80,122 Q84,126 82,131 L38,131 Q36,126 40,122 Q34,108 33,92 Q26,74 30,54 Q24,40 52,33 Q42,26 46,20 Q60,6 74,20 Z" fill="currentColor"/>' +
+    '<circle cx="60" cy="10" r="5" fill="currentColor"/>' +
+    '<path d="M88,50 C108,46 122,30 132,8 C134,4 130,3 127,7 C118,22 104,38 92,48 Z" fill="currentColor"/>' +
+    '<path d="M32,60 C10,58 6,86 24,94" stroke="currentColor" stroke-width="7" stroke-linecap="round" fill="none"/>' +
+    '</svg>';
+
+  var ICON_ARROW = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h11.5M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_BACK = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 8H2.5M7 3.5 2.5 8 7 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_CHECK = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12.5 9.5 18 20 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_DOC = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l4 4v14H6z" stroke-linejoin="round"/><path d="M15 3v4h4" stroke-linejoin="round"/></svg>';
+  var ICON_CAM = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M8 7 10 4h4l2 3"/><circle cx="12" cy="13.5" r="3.5"/></svg>';
+  var ICON_FILM = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M7 5v14M17 5v14M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/></svg>';
+  var ICON_FINJAN = '<svg viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<ellipse cx="40" cy="52" rx="32" ry="6"/>' +
+    '<path d="M14 10 H66 L58 42 H22 Z"/>' +
+    '<line x1="19" y1="17" x2="61" y2="17" opacity="0.55"/>' +
+    '</svg>';
+
+  var app = document.getElementById("app");
+
+  /* ---------------- pour transition ---------------- */
+  function playPourTransition(done){
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduce){ done(); return; }
+    var overlay = document.createElement("div");
+    overlay.className = "pour-overlay";
+    overlay.innerHTML =
+      '<div class="pour-scene">' +
+        '<div class="pour-dallah">' + ICON_DALLAH + '</div>' +
+        '<div class="pour-stream"></div>' +
+        '<div class="pour-finjan">' + ICON_FINJAN + '<div class="pour-liquid"></div></div>' +
+      '</div>' +
+      '<p class="pour-caption kufi">Pouring your journey&hellip;</p>';
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function(){ overlay.classList.add("show"); });
+    setTimeout(function(){
+      overlay.classList.add("hide");
+      setTimeout(function(){ overlay.remove(); done(); }, 320);
+    }, 1550);
+  }
+
+  /* ---------------- validation ---------------- */
+  function isValid(step){
+    var v = state.values[step.key];
+    switch(step.type){
+      case "text":
+        return !!(v && String(v).trim().length > 1);
+      case "date":
+        if(!v) return false;
+        var d = new Date(v);
+        if(isNaN(d.getTime())) return false;
+        var age = (Date.now() - d.getTime()) / (365.25*24*3600*1000);
+        return age >= 18 && age < 110;
+      case "email":
+        return !!(v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+      case "single":
+        return !!v;
+      case "multi":
+        return !!(v && v.length > 0);
+      case "textarea":
+        return !!(v && String(v).trim().length > 8);
+      case "files":
+        return !!(state.files.photo);
+      case "final":
+        return state.consent.a && state.consent.b;
+      default:
+        return true;
+    }
+  }
+
+  function errorFor(step){
+    switch(step.type){
+      case "text": return "Please enter your full name.";
+      case "date": return "You must be 18 or older to apply.";
+      case "email": return "Enter a valid email address.";
+      case "single": return "Choose one option to continue.";
+      case "multi": return "Choose at least one option.";
+      case "textarea": return "Tell us a little more — a sentence or two.";
+      case "files": return "Please add a recent photo to continue.";
+      case "final": return "Please confirm both statements to send your application.";
+      default: return "This field is required.";
+    }
+  }
+
+  /* ---------------- rendering ---------------- */
+  function render(){
+    if(state.step < 0){ renderLanding(); }
+    else if(state.disqualified){ renderNotEligible(); }
+    else if(state.sent){ renderConfirmation(); }
+    else { renderWizard(); }
+  }
+
+  function renderNotEligible(){
+    var reason = state.disqualified.reason;
+    var fromStep = state.disqualified.fromStep;
+    app.innerHTML =
+      headerHtml(true) +
+      '<main class="stage"><div class="landing" style="align-items:center;">' +
+        '<div class="landing-inner confirm fade-enter">' +
+          '<div class="stamp" style="border-color:var(--carnelian);color:var(--carnelian);"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>' +
+          '<h2>Not quite yet.</h2>' +
+          '<p>' + escapeHtml(reason) + '</p>' +
+          '<div class="nav-row" style="margin-top:28px; justify-content:flex-start; gap:16px;">' +
+            '<button class="btn-back" id="reconsider-btn" type="button">' + ICON_BACK + ' Change my answer</button>' +
+            '<button class="cta" id="exit-not-eligible" style="padding:12px 20px;">Return to the beginning' + ICON_ARROW + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div></main>';
+    document.getElementById("exit-btn").addEventListener("click", function(){ resetAll(); });
+    document.getElementById("exit-not-eligible").addEventListener("click", function(){ resetAll(); });
+    document.getElementById("reconsider-btn").addEventListener("click", function(){
+      state.disqualified = null;
+      state.step = fromStep;
+      saveState();
+      render();
+    });
+  }
+
+  function renderLanding(){
+    var hasSaved = state.step > 0 || Object.keys(state.values).length > 0;
+    app.innerHTML =
+      '<div id="app-inner" style="display:flex;flex-direction:column;min-height:100vh;">' +
+      headerHtml(false) +
+      '<main class="stage"><section class="landing fade-enter">' +
+        '<div class="landing-pot">' + ICON_DALLAH.replace('<svg ', '<svg style="width:100%;height:auto;" ') + '</div>' +
+        '<div class="landing-inner">' +
+          '<div class="eyebrow">20 moments &middot; about 5 minutes</div>' +
+          '<h1>One question.<br><em>One cup</em> at a time.</h1>' +
+          '<p class="lede">Apply to represent Emirati coffee culture and hospitality at exhibitions and events across Abu Dhabi.</p>' +
+          '<button class="cta" id="begin-btn">' + (hasSaved ? "Continue your application" : "Begin your application") + ICON_ARROW + '</button>' +
+          (hasSaved ? '<div class="resume-note">Picking up from moment ' + (Math.max(state.step,0)+1) + ' of ' + TOTAL + '. <button id="restart-btn" type="button">Start over instead</button></div>' : '') +
+        '</div>' +
+      '</section></main>' +
+      '</div>';
+
+    document.getElementById("begin-btn").addEventListener("click", function(){
+      playPourTransition(function(){
+        state.step = Math.max(state.step, 0);
+        saveState();
+        render();
+      });
+    });
+    var restart = document.getElementById("restart-btn");
+    if(restart){
+      restart.addEventListener("click", function(){
+        state.values = {}; state.files = {}; state.consent = {a:false,b:false}; state.step = 0;
+        clearState(); render();
+      });
+    }
+  }
+
+  function headerHtml(showExit){
+    return '<header class="top">' +
+      '<div class="brand"><span class="brand-mark kufi">ب</span><span class="brand-name">Bait Al Gahwa</span></div>' +
+      (showExit ?
+        '<button class="exit-link" id="exit-btn" type="button">Exit</button>' :
+        '<span class="top-tag">Local Coffee Maker Programme</span>') +
+      '</header>';
+  }
+
+  function renderWizard(){
+    var step = STEPS[state.step];
+    var arc = ARCS[step.arc];
+
+    app.innerHTML =
+      headerHtml(true) +
+      '<main class="stage"><div class="wizard">' +
+        sideHtml(step, arc) +
+        '<div class="content">' +
+          progressHtml() +
+          '<div class="card-area"><div class="card fade-enter" id="card">' +
+            '<div class="watermark">' + ICON_DALLAH + '</div>' +
+            cardBodyHtml(step) +
+          '</div></div>' +
+        '</div>' +
+      '</div></main>';
+
+    document.getElementById("exit-btn").addEventListener("click", function(){
+      showConfirm(
+        "Leave the application?",
+        "Your answers are saved on this device — you can pick up right where you left off.",
+        "Leave for now",
+        function(){ state.step = -1; render(); }
+      );
+    });
+
+    wireCard(step);
+    wireCups();
+  }
+
+  function showConfirm(title, message, confirmLabel, onConfirm){
+    var overlay = document.createElement("div");
+    overlay.className = "confirm-overlay";
+    overlay.innerHTML =
+      '<div class="confirm-modal fade-enter">' +
+        '<h3>' + escapeHtml(title) + '</h3>' +
+        '<p>' + escapeHtml(message) + '</p>' +
+        '<div class="nav-row" style="margin-top:22px;">' +
+          '<button class="btn-back" id="confirm-cancel" type="button">Keep going</button>' +
+          '<button class="btn-continue" id="confirm-ok" type="button">' + escapeHtml(confirmLabel) + '</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    function close(){ overlay.remove(); }
+    overlay.addEventListener("click", function(e){ if(e.target === overlay) close(); });
+    document.getElementById("confirm-cancel").addEventListener("click", close);
+    document.getElementById("confirm-ok").addEventListener("click", function(){ close(); onConfirm(); });
+  }
+
+  function sideHtml(step, arc){
+    return '<aside class="side">' +
+      '<span class="glow one"></span><span class="glow two"></span>' +
+      '<div class="side-icon">' + ICON_DALLAH + '</div>' +
+      '<div class="side-arc kufi">' + arc.name + '</div>' +
+      '<h2>' + arc.caption + '</h2>' +
+    '</aside>';
+  }
+
+  function progressHtml(){
+    var groups = "";
+    ARCS.forEach(function(arc, ai){
+      var cups = "";
+      STEPS.forEach(function(s, i){
+        if(s.arc !== ai) return;
+        var cls = "cup";
+        if(i < state.step) cls += " done";
+        else if(i === state.step) cls += " current";
+        cups += '<button type="button" data-jump="' + i + '" aria-label="Moment ' + (i+1) + '"><span class="' + cls + '"><span class="fill"></span></span></button>';
+      });
+      var jumpable = (state.step > firstIndexOfArc(ai)) ? " jumpable" : "";
+      groups += '<div class="cup-group' + jumpable + '">' + cups + '</div>';
+    });
+    return '<div class="progress-wrap">' +
+      '<div class="progress-meta"><span>Moment ' + (state.step+1) + ' of ' + TOTAL + '</span><span>' + Math.round(((state.step)/TOTAL)*100) + '% poured</span></div>' +
+      '<div class="cups">' + groups + '</div>' +
+    '</div>';
+  }
+
+  function firstIndexOfArc(ai){
+    for(var i=0;i<STEPS.length;i++){ if(STEPS[i].arc===ai) return i; }
+    return 0;
+  }
+
+  function wireCups(){
+    document.querySelectorAll(".cup-group button").forEach(function(btn){
+      var idx = parseInt(btn.getAttribute("data-jump"),10);
+      if(idx < state.step){
+        btn.addEventListener("click", function(){ state.step = idx; saveState(); render(); });
+      }
+    });
+  }
+
+  function cardBodyHtml(step){
+    var num = String(state.step+1).padStart(2,"0");
+    var head =
+      '<div class="step-meta"><span class="step-num kufi">' + num + '</span><span class="step-eyebrow">' + step.eyebrow + '</span></div>' +
+      '<h2 class="step-q">' + step.q + '</h2>' +
+      (step.help ? '<p class="step-help">' + step.help + '</p>' : '');
+
+    var body = "";
+    if(step.type === "text"){
+      var v = state.values[step.key] || "";
+      body = '<input class="field-text" type="' + (step.inputType||"text") + '" id="field" placeholder="' + step.placeholder + '" value="' + escapeAttr(v) + '" autocomplete="off">';
+    } else if(step.type === "email"){
+      var ve = state.values[step.key] || "";
+      body = '<input class="field-text" type="email" id="field" placeholder="' + step.placeholder + '" value="' + escapeAttr(ve) + '" autocomplete="off">';
+    } else if(step.type === "date"){
+      var vd = state.values[step.key] || "";
+      body = '<input class="field-text" type="date" id="field" value="' + escapeAttr(vd) + '">';
+    } else if(step.type === "textarea"){
+      var vt = state.values[step.key] || "";
+      body = '<textarea class="field-text" id="field" rows="5" placeholder="' + step.placeholder + '">' + escapeHtml(vt) + '</textarea>';
+    } else if(step.type === "single"){
+      body = '<div class="options" id="field">' + step.options.map(function(opt,i){
+        var sel = state.values[step.key] === opt;
+        return '<button type="button" class="opt' + (sel?" selected":"") + '" data-val="' + escapeAttr(opt) + '">' +
+          '<span class="badge kufi">' + String.fromCharCode(65+i) + '</span><span>' + opt + '</span><span class="tick">' + ICON_CHECK + '</span></button>';
+      }).join("") + '</div>';
+    } else if(step.type === "multi"){
+      var cur = state.values[step.key] || [];
+      body = '<div class="options" id="field">' + step.options.map(function(opt,i){
+        var sel = cur.indexOf(opt) > -1;
+        return '<button type="button" class="opt' + (sel?" selected":"") + '" data-val="' + escapeAttr(opt) + '">' +
+          '<span class="badge kufi">' + String.fromCharCode(65+i) + '</span><span>' + opt + '</span><span class="tick">' + ICON_CHECK + '</span></button>';
+      }).join("") + '</div>';
+    } else if(step.type === "files"){
+      body = '<div class="upload-grid" id="field">' +
+        uploadRow("cv","CV","PDF or Word · max 5 MB, optional", ICON_DOC) +
+        uploadRow("photo","Recent photo","JPG, PNG or WebP · max 10 MB, required", ICON_CAM) +
+        uploadRow("video","Introduction video","MP4, MOV or WebM · max 25 MB, optional", ICON_FILM) +
+      '</div>';
+    } else if(step.type === "final"){
+      body = reviewHtml();
+    }
+
+    var backBtn = state.step > 0 ? '<button class="btn-back" id="back-btn" type="button">' + ICON_BACK + ' Back</button>' : '<span></span>';
+    var continueLabel = state.step === TOTAL-1 ? "Send application" : "Continue";
+    var continueBtn = step.type === "final"
+      ? '<button class="btn-continue" id="continue-btn" type="button" ' + (isValid(step)?"":"disabled") + '>' + continueLabel + ICON_ARROW + '</button>'
+      : '<button class="btn-continue" id="continue-btn" type="button">' + continueLabel + ICON_ARROW + '</button>';
+
+    return head + body + '<p class="field-error" id="err"></p>' +
+      '<div class="nav-row">' + backBtn + continueBtn + '</div>';
+  }
+
+  function uploadRow(key,label,desc,icon){
+    var f = state.files[key];
+    return '<label class="upload' + (f?" filled":"") + '" data-key="' + key + '">' +
+      '<span class="u-icon">' + icon + '</span>' +
+      '<span class="u-text"><b>' + label + '</b><span>' + desc + '</span></span>' +
+      '<span class="u-file">' + (f ? escapeHtml(f.name) : "") + '</span>' +
+      '<input type="file" data-key="' + key + '">' +
+    '</label>';
+  }
+
+  function fieldLabel(key){
+    var map = {
+      name:"Name", dob:"Date of birth", gender:"Gender", phone:"Mobile",
+      email:"Email", location:"Neighbourhood", national:"UAE National",
+      travel:"Can travel", availability:"Availability", hours:"Hours per week",
+      transport:"Own transport", experience:"Gahwa experience", training:"Hospitality training",
+      languages:"Languages", education:"Education", status:"Current status",
+      motivation:"Why you're applying", referral:"Heard about us via"
+    };
+    return map[key] || key;
+  }
+
+  function reviewHtml(){
+    var order = ["national","dob","name","gender","phone","email","location","travel","availability","hours",
+      "transport","experience","training","languages","education","status","motivation","referral"];
+    var rows = "";
+    order.forEach(function(key){
+      var v = state.values[key];
+      if(v === undefined || v === null || v === "" || (Array.isArray(v) && v.length===0)) return;
+      var display = Array.isArray(v) ? v.join(", ") : v;
+      if(key === "motivation" && display.length > 70) display = display.slice(0,70) + "…";
+      var stepIndex = STEPS.findIndex(function(s){ return s.key === key; });
+      rows += '<div class="review-row"><dt>' + fieldLabel(key) + '</dt><dd>' + escapeHtml(String(display)) +
+        '<button type="button" class="review-edit" data-jump="' + stepIndex + '">Edit</button></dd></div>';
+    });
+    if(state.files.photo){
+      rows += '<div class="review-row"><dt>Photo</dt><dd>' + escapeHtml(state.files.photo.name) + '</dd></div>';
+    }
+
+    return '<dl class="review-list">' + rows + '</dl>' +
+      '<div class="consent">' +
+        '<label><input type="checkbox" id="consent-a" ' + (state.consent.a?"checked":"") + '><span>I confirm that the information provided is accurate.</span></label>' +
+        '<label><input type="checkbox" id="consent-b" ' + (state.consent.b?"checked":"") + '><span>I consent to my data being used for recruitment and agree to be contacted.</span></label>' +
+      '</div>';
+  }
+
+  function wireCard(step){
+    var errEl = document.getElementById("err");
+    var continueBtn = document.getElementById("continue-btn");
+    var backBtn = document.getElementById("back-btn");
+
+    function goNext(){
+      if(!isValid(step)){ errEl.textContent = errorFor(step); shakeCard(); return; }
+      errEl.textContent = "";
+      if(step.gate && step.gate(state.values[step.key])){
+        state.disqualified = { reason: step.gateReason, fromStep: state.step };
+        saveState();
+        render();
+        return;
+      }
+      if(state.step === TOTAL-1){
+        submitApplication();
+        return;
+      }
+      state.step++;
+      saveState();
+      render();
+    }
+
+    function submitApplication(){
+      var btn = document.getElementById("continue-btn");
+      if(btn){ btn.disabled = true; btn.textContent = "Sending…"; }
+
+      var fd = new FormData();
+      Object.keys(state.values).forEach(function(key){
+        var v = state.values[key];
+        if(Array.isArray(v)) fd.append(key, v.join(","));
+        else if(v !== undefined && v !== null) fd.append(key, v);
+      });
+      if(state.files.cv) fd.append("cv", state.files.cv);
+      if(state.files.photo) fd.append("photo", state.files.photo);
+      if(state.files.video) fd.append("video", state.files.video);
+      fd.append("company_website", ""); // honeypot — real applicants never see or fill this
+
+      fetch("/api/applications", { method: "POST", body: fd })
+        .then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
+        .then(function(result){
+          if(!result.ok){
+            errEl.textContent = (result.data && result.data.message) || "Something went wrong. Please try again.";
+            if(btn){ btn.disabled = false; btn.textContent = "Send application"; }
+            shakeCard();
+            return;
+          }
+          state.sent = true;
+          state.serverReference = result.data.reference;
+          clearState();
+          render();
+        })
+        .catch(function(){
+          errEl.textContent = "Couldn't reach the server. Check your connection and try again.";
+          if(btn){ btn.disabled = false; btn.textContent = "Send application"; }
+          shakeCard();
+        });
+    }
+    function goBack(){ if(state.step>0){ state.step--; saveState(); render(); } }
+
+    if(backBtn) backBtn.addEventListener("click", goBack);
+    if(continueBtn) continueBtn.addEventListener("click", goNext);
+
+    if(step.type === "text" || step.type === "email" || step.type === "date"){
+      var input = document.getElementById("field");
+      input.addEventListener("input", function(){ state.values[step.key] = input.value; errEl.textContent=""; });
+      input.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); goNext(); } });
+      setTimeout(function(){ input.focus(); }, 10);
+    }
+
+    if(step.type === "textarea"){
+      var ta = document.getElementById("field");
+      ta.addEventListener("input", function(){ state.values[step.key] = ta.value; errEl.textContent=""; });
+      setTimeout(function(){ ta.focus(); }, 10);
+    }
+
+    if(step.type === "single"){
+      document.querySelectorAll("#field .opt").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          state.values[step.key] = btn.getAttribute("data-val");
+          saveState();
+          errEl.textContent = "";
+          document.querySelectorAll("#field .opt").forEach(function(b){ b.classList.remove("selected"); });
+          btn.classList.add("selected");
+          setTimeout(goNext, 280);
+        });
+      });
+    }
+
+    if(step.type === "multi"){
+      document.querySelectorAll("#field .opt").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var val = btn.getAttribute("data-val");
+          var arr = state.values[step.key] ? state.values[step.key].slice() : [];
+          var idx = arr.indexOf(val);
+          if(idx>-1) arr.splice(idx,1); else arr.push(val);
+          state.values[step.key] = arr;
+          btn.classList.toggle("selected");
+          errEl.textContent = "";
+          saveState();
+        });
+      });
+    }
+
+    if(step.type === "files"){
+      document.querySelectorAll("#field .upload input").forEach(function(inp){
+        inp.addEventListener("change", function(){
+          var key = inp.getAttribute("data-key");
+          if(inp.files && inp.files[0]){
+            state.files[key] = inp.files[0];
+            errEl.textContent = "";
+            render();
+          }
+        });
+      });
+    }
+
+    if(step.type === "final"){
+      var ca = document.getElementById("consent-a");
+      var cb = document.getElementById("consent-b");
+      function syncConsent(){
+        state.consent.a = ca.checked; state.consent.b = cb.checked;
+        var btn = document.getElementById("continue-btn");
+        if(btn) btn.disabled = !(state.consent.a && state.consent.b);
+        errEl.textContent = "";
+      }
+      ca.addEventListener("change", syncConsent);
+      cb.addEventListener("change", syncConsent);
+      document.querySelectorAll(".review-edit").forEach(function(b){
+        b.addEventListener("click", function(){
+          state.step = parseInt(b.getAttribute("data-jump"),10);
+          saveState(); render();
+        });
+      });
+    }
+  }
+
+  function shakeCard(){
+    var card = document.getElementById("card");
+    if(!card) return;
+    card.style.transition = "transform .08s ease";
+    card.style.transform = "translateX(-4px)";
+    setTimeout(function(){ card.style.transform = "translateX(4px)"; }, 80);
+    setTimeout(function(){ card.style.transform = "translateX(0)"; }, 160);
+  }
+
+  function renderConfirmation(){
+    var ref = state.serverReference || "—";
+    app.innerHTML =
+      headerHtml(true) +
+      '<main class="stage"><div class="landing" style="align-items:center;">' +
+        '<div class="landing-inner confirm fade-enter">' +
+          '<div class="stamp" style="border-color:var(--cardamom);color:var(--cardamom);">' + ICON_FINJAN + '</div>' +
+          '<h2>Your cup has been poured.</h2>' +
+          '<p>Thank you for applying to Bait Al Gahwa. We read every application by hand — expect to hear from our team within two weeks.</p>' +
+          '<p class="ref kufi">Reference ' + ref + '</p>' +
+          '<button class="cta" id="done-btn" style="margin-top:28px;">Return to the beginning' + ICON_ARROW + '</button>' +
+        '</div>' +
+      '</div></main>';
+    document.getElementById("exit-btn").addEventListener("click", function(){ resetAll(); });
+    document.getElementById("done-btn").addEventListener("click", function(){ resetAll(); });
+  }
+
+  function resetAll(){
+    state = { step:-1, values:{}, files:{}, consent:{a:false,b:false}, sent:false, disqualified:null };
+    clearState(); render();
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function escapeAttr(s){ return escapeHtml(s); }
+
+  render();
+})();
+</script>
