@@ -430,9 +430,9 @@
   }
   .confirm-modal h3{ font-size:1.3rem; margin-bottom:10px; }
   .confirm-modal p{ color:var(--muted); font-size:0.92rem; line-height:1.55; }
-  .age-gate-modal{ max-width:400px; }
-  .age-gate-icon{ width:44px; color:var(--brass); margin-bottom:14px; opacity:0.9; }
-  .age-gate-icon svg{ width:100%; height:auto; display:block; }
+  .gate-modal{ max-width:400px; }
+  .gate-modal-icon{ width:44px; color:var(--brass); margin-bottom:14px; opacity:0.9; }
+  .gate-modal-icon svg{ width:100%; height:auto; display:block; }
 
   /* ---------------- pour transition ---------------- */
   .pour-overlay{
@@ -1015,6 +1015,10 @@
           showAgeGatePopup(yearsUntilEligible(state.values[step.key]));
           return;
         }
+        if(step.key === "national"){
+          showNationalGatePopup();
+          return;
+        }
         state.disqualified = { reason: step.gateReason, fromStep: state.step };
         saveState();
         render();
@@ -1044,8 +1048,8 @@
           if(continueBtn){ continueBtn.disabled = false; continueBtn.innerHTML = continueLabel + ICON_ARROW; }
           if(isDuplicate){
             errEl.textContent = step.key === "email"
-              ? "An application already exists for this email address. Only one application is allowed per person."
-              : "An application already exists for this mobile number. Only one application is allowed per person.";
+              ? "You've already applied with this email address. Only one application is allowed per person."
+              : "You've already applied with this mobile number. Only one application is allowed per person.";
             shakeCard();
             return;
           }
@@ -1077,24 +1081,38 @@
       return remaining > 0 ? remaining : 1;
     }
 
-    function showAgeGatePopup(years){
-      var yLabel = years + (years === 1 ? " year" : " years");
+    function showGatePopup(title, message){
       var overlay = document.createElement("div");
       overlay.className = "confirm-overlay";
       overlay.innerHTML =
-        '<div class="confirm-modal fade-enter age-gate-modal">' +
-          '<div class="age-gate-icon">' + ICON_FINJAN + '</div>' +
-          '<h3>Oops — ' + yLabel + ' to go!</h3>' +
-          '<p>Bait Al Gahwa is open to applicants 18 and older. Come back in ' + yLabel + ' and we\'ll have a seat in the majlis waiting for you.</p>' +
+        '<div class="confirm-modal fade-enter gate-modal">' +
+          '<div class="gate-modal-icon">' + ICON_FINJAN + '</div>' +
+          '<h3>' + title + '</h3>' +
+          '<p>' + message + '</p>' +
           '<div class="nav-row" style="margin-top:22px; justify-content:flex-end;">' +
-            '<button class="btn-continue" id="age-gate-ok" type="button">Got it' + ICON_ARROW + '</button>' +
+            '<button class="btn-continue" id="gate-popup-ok" type="button">Got it' + ICON_ARROW + '</button>' +
           '</div>' +
         '</div>';
       document.body.appendChild(overlay);
       setTimeout(function(){
         overlay.addEventListener("click", function(e){ if(e.target === overlay) overlay.remove(); });
       }, 0);
-      document.getElementById("age-gate-ok").addEventListener("click", function(){ overlay.remove(); });
+      document.getElementById("gate-popup-ok").addEventListener("click", function(){ overlay.remove(); });
+    }
+
+    function showAgeGatePopup(years){
+      var yLabel = years + (years === 1 ? " year" : " years");
+      showGatePopup(
+        "Yalla, just " + yLabel + " to go!",
+        "Bait Al Gahwa is open to applicants 18 and older — we\'ll save you a spot by the finjan. Come back in " + yLabel + " and pour your first cup with us."
+      );
+    }
+
+    function showNationalGatePopup(){
+      showGatePopup(
+        "Appreciate your interest",
+        "This programme is meant for UAE Nationals only."
+      );
     }
 
     function submitApplication(){
