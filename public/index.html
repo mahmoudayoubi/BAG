@@ -178,12 +178,31 @@
   .side::before{
     content:""; position:absolute; inset:0; z-index:-2;
     background-color:var(--ink-2);
+    background-image: linear-gradient(180deg, rgba(18,14,10,0.55) 0%, rgba(18,14,10,0.72) 55%, rgba(18,14,10,0.93) 100%);
+    background-size:cover; background-position:center; background-repeat:no-repeat;
+    transition:background-image .4s ease;
+  }
+  /* One reference photo per arc of the journey, so the left panel's backdrop
+     changes as the applicant moves through the form. All three are free-to-use
+     Unsplash-licensed photography (not the exact client campaign images). */
+  .side[data-arc="0"]::before{
+    background-image:
+      linear-gradient(180deg, rgba(18,14,10,0.55) 0%, rgba(18,14,10,0.72) 55%, rgba(18,14,10,0.93) 100%),
+      url('https://images.unsplash.com/photo-1690983323458-ec4a54fc9552?fm=jpg&q=70&w=1400&auto=format&fit=crop&ixlib=rb-4.1.0');
+    background-size:cover, cover; background-position:center, center; background-repeat:no-repeat, no-repeat;
+  }
+  .side[data-arc="1"]::before,
+  .side[data-arc="3"]::before{
     background-image:
       linear-gradient(180deg, rgba(18,14,10,0.55) 0%, rgba(18,14,10,0.72) 55%, rgba(18,14,10,0.93) 100%),
       url('https://images.unsplash.com/photo-1618597778480-8c5d3f2d3ba8?fm=jpg&q=70&w=1400&auto=format&fit=crop&ixlib=rb-4.1.0');
-    background-size:cover, cover;
-    background-position:center, center;
-    background-repeat:no-repeat, no-repeat;
+    background-size:cover, cover; background-position:center, center; background-repeat:no-repeat, no-repeat;
+  }
+  .side[data-arc="2"]::before{
+    background-image:
+      linear-gradient(180deg, rgba(18,14,10,0.55) 0%, rgba(18,14,10,0.72) 55%, rgba(18,14,10,0.93) 100%),
+      url('https://images.unsplash.com/photo-1753837787691-84a06d715d24?fm=jpg&q=70&w=1400&auto=format&fit=crop&ixlib=rb-4.1.0');
+    background-size:cover, cover; background-position:center, center; background-repeat:no-repeat, no-repeat;
   }
   .side .glow{
     position:absolute; z-index:-1; border-radius:50%;
@@ -411,6 +430,9 @@
   }
   .confirm-modal h3{ font-size:1.3rem; margin-bottom:10px; }
   .confirm-modal p{ color:var(--muted); font-size:0.92rem; line-height:1.55; }
+  .age-gate-modal{ max-width:400px; }
+  .age-gate-icon{ width:44px; color:var(--brass); margin-bottom:14px; opacity:0.9; }
+  .age-gate-icon svg{ width:100%; height:auto; display:block; }
 
   /* ---------------- pour transition ---------------- */
   .pour-overlay{
@@ -649,11 +671,15 @@
         if(step.key === "phone") return isValidPhone(v);
         return !!(v && String(v).trim().length > 1);
       case "date":
+        // Only checks that this is a real, plausible birthdate. The 18+ rule
+        // is enforced separately by the step's gate() (see the dob step),
+        // so an underage applicant sees the friendly age-gate popup instead
+        // of a generic "invalid field" error here.
         if(!v) return false;
         var d = new Date(v);
         if(isNaN(d.getTime())) return false;
         var age = (Date.now() - d.getTime()) / (365.25*24*3600*1000);
-        return age >= 18 && age < 110;
+        return age >= 0 && age < 110;
       case "email":
         return isValidEmail(v);
       case "single":
@@ -676,7 +702,7 @@
       case "text":
         if(step.key === "phone") return "Enter a valid mobile number (7–15 digits, country code optional, e.g. +971 5X XXX XXXX).";
         return "Please enter your full name.";
-      case "date": return "You must be 18 or older to apply.";
+      case "date": return "Please enter a valid date of birth.";
       case "email": return "Enter a valid email address.";
       case "single": return "Choose one option to continue.";
       case "multi": return "Choose at least one option.";
@@ -831,7 +857,7 @@
     var embers = EMBER_SPECS.map(function(e){
       return '<span class="ember" style="left:' + e.l + '%;bottom:' + e.b + '%;animation-duration:' + e.dur + 's;animation-delay:' + e.delay + 's;"></span>';
     }).join("");
-    return '<aside class="side">' +
+    return '<aside class="side" data-arc="' + step.arc + '">' +
       '<span class="glow one"></span><span class="glow two"></span>' +
       embers +
       '<div class="side-icon-wrap">' +
@@ -983,10 +1009,12 @@
     var continueBtn = document.getElementById("continue-btn");
     var backBtn = document.getElementById("back-btn");
 
-    function goNext(){
-      if(!isValid(step)){ errEl.textContent = errorFor(step); shakeCard(); return; }
-      errEl.textContent = "";
+    function proceedPastGate(){
       if(step.gate && step.gate(state.values[step.key])){
+        if(step.key === "dob"){
+          showAgeGatePopup(yearsUntilEligible(state.values[step.key]));
+          return;
+        }
         state.disqualified = { reason: step.gateReason, fromStep: state.step };
         saveState();
         render();
@@ -999,6 +1027,74 @@
       state.step++;
       saveState();
       render();
+    }
+
+    function goNext(){
+      if(!isValid(step)){ errEl.textContent = errorFor(step); shakeCard(); return; }
+      errEl.textContent = "";
+
+      // Email and phone are checked against existing applications right away,
+      // rather than waiting until the final "Send application" step — so a
+      // returning applicant finds out immediately instead of after filling
+      // out the whole form and uploading files.
+      if(step.key === "email" || step.key === "phone"){
+        var continueLabel = state.step === TOTAL-1 ? "Send application" : "Continue";
+        if(continueBtn){ continueBtn.disabled = true; continueBtn.innerHTML = "Checking&hellip;"; }
+        checkDuplicate(step.key, state.values[step.key], function(isDuplicate){
+          if(continueBtn){ continueBtn.disabled = false; continueBtn.innerHTML = continueLabel + ICON_ARROW; }
+          if(isDuplicate){
+            errEl.textContent = step.key === "email"
+              ? "An application already exists for this email address. Only one application is allowed per person."
+              : "An application already exists for this mobile number. Only one application is allowed per person.";
+            shakeCard();
+            return;
+          }
+          proceedPastGate();
+        });
+        return;
+      }
+
+      proceedPastGate();
+    }
+
+    function checkDuplicate(field, value, cb){
+      if(!value){ cb(false); return; }
+      fetch("/api/check-duplicate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ field: field, value: value })
+      })
+        .then(function(res){ return res.json(); })
+        .then(function(data){ cb(!!(data && data.duplicate)); })
+        .catch(function(){ cb(false); }); // fail open — the server re-checks on final submit anyway
+    }
+
+    function yearsUntilEligible(dobValue){
+      var d = new Date(dobValue);
+      if(isNaN(d.getTime())) return 1;
+      var ageYears = (Date.now() - d.getTime()) / (365.25*24*3600*1000);
+      var remaining = Math.ceil(18 - ageYears);
+      return remaining > 0 ? remaining : 1;
+    }
+
+    function showAgeGatePopup(years){
+      var yLabel = years + (years === 1 ? " year" : " years");
+      var overlay = document.createElement("div");
+      overlay.className = "confirm-overlay";
+      overlay.innerHTML =
+        '<div class="confirm-modal fade-enter age-gate-modal">' +
+          '<div class="age-gate-icon">' + ICON_FINJAN + '</div>' +
+          '<h3>Oops — ' + yLabel + ' to go!</h3>' +
+          '<p>Bait Al Gahwa is open to applicants 18 and older. Come back in ' + yLabel + ' and we\'ll have a seat in the majlis waiting for you.</p>' +
+          '<div class="nav-row" style="margin-top:22px; justify-content:flex-end;">' +
+            '<button class="btn-continue" id="age-gate-ok" type="button">Got it' + ICON_ARROW + '</button>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      setTimeout(function(){
+        overlay.addEventListener("click", function(e){ if(e.target === overlay) overlay.remove(); });
+      }, 0);
+      document.getElementById("age-gate-ok").addEventListener("click", function(){ overlay.remove(); });
     }
 
     function submitApplication(){
