@@ -1,0 +1,7 @@
+.env
+data/gahwa.db
+data/gahwa.db-*
+data/uploads/
+__pycache__/
+*.pyc
+.DS_Store
